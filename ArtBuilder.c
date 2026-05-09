@@ -201,6 +201,11 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         IVec2 dir;
         cc_uint8 off;
 
+        if (argsCount == 1) {
+            Chat_AddRaw("&eToo few arguments.");
+            return;
+        }
+        
         if (String_CaselessEqualsConst_(&args[1], "stop")) {
             if (!MPenabled) {
                 Chat_AddRaw("&eYou are not in multiplayer mode.");
@@ -474,8 +479,6 @@ static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
 }
 
 static void ArtBuilder_Init(void) {
-    MPenabled = false;
-    MPbuildRunning = false;
     OnceCall(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(MPplaceInterval, ArtBuilder_MPBuildTask);
     OnceCall(FP_Commands_Register, COMMANDS_REGISTER_)(&BuildImageCmd);
 }
@@ -499,6 +502,8 @@ static void ArtBuilder_OnNewMapLoaded(void) {
         MPenabled = true;
         Chat_AddRaw("&eBuildImage mode setted to multiplayer");
         Chat_AddRaw("&eTo turn it off, type /client BuildImage multiplayer false");
+    } else {
+        MPenabled = false;
     }
 }
 
