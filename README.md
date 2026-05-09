@@ -15,13 +15,13 @@ A couple of useful (or not) features for [ClassiCube](https://github.com/ClassiC
 ## ArtBuilder
 | Command | Description |
 |---------|-------------|
-| /client ArtBuilder build [path to png] [posX posY posZ] [degX degY] | Builds an [path to png] from blocks at [posX posY posZ] and degree [degX degY]. Path to png must be relative ClassiCube executable |
+| /client ArtBuilder build [path to png] [posX posY posZ] [degX degY] | Builds an [path to png] from blocks at [posX posY posZ] and degree [degX degY]. [path to png] must be relative to ClassiCube executable |
 | /client ArtBuilder [parameter] [value]                              | Sets [parameter] to [value]                                             |
 
 ### Multiplayer mode
 ArtBuilder, like other features from this plugin, fully supports multiplayer!
 
-For multiplayer, ArtBuilder provides some customizable parameters to control how ArtBuilder would build your image
+For multiplayer, ArtBuilder provides some customizable parameters to control how ArtBuilder would build your image.
 
 | Parameter | Description |
 |-----------|-------------|
