@@ -15,7 +15,7 @@ A couple of useful (or not) features for ClassiCube in one plugin!
 ## ArtBuilder
 | Command | Description |
 |---------|-------------|
-| /client ArtBuilder build [path to png] [posX posY posZ] [dirX dirY] | Builds an [path to png] from blocks at [posX posY posZ] and [dirX dirY] |
+| /client ArtBuilder build [path to png] [posX posY posZ] [dirX dirY] | Builds an [path to png] from blocks at [posX posY posZ] and [dirX dirY]. Path to png must be relative ClassiCube executable |
 | /client ArtBuilder [parameter] [value]                              | Sets [parameter] to [value]                                             |
 
 ### Multiplayer mode
