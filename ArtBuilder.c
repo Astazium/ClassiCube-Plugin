@@ -350,11 +350,8 @@ static struct ChatCommand BuildImageCmd = {
     "ArtBuilder", ArtBuilder_Execute,
     0,
     {
-        "&a/client ArtBuilder [path to png] [posX posY posZ] [dirX dirY]",
-        "&eBuilds an image from blocks",
-        "&e[path to image] must be relative to your ClassiCube executeable",
-        "&eIf parameters after [path to png] not specified,",
-        "&evalues for them taken from player",
+        "&a/client ArtBuilder",
+        "&eView README.md",
     }
 };
 
