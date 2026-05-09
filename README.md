@@ -15,7 +15,7 @@ A couple of useful (or not) features for [ClassiCube](https://github.com/ClassiC
 ## ArtBuilder
 | Command | Description |
 |---------|-------------|
-| /client ArtBuilder build [path to png] [posX posY posZ] [dirX dirY] | Builds an [path to png] from blocks at [posX posY posZ] and [dirX dirY]. Path to png must be relative ClassiCube executable |
+| /client ArtBuilder build [path to png] [posX posY posZ] [degX degY] | Builds an [path to png] from blocks at [posX posY posZ] and degree [degX degY]. Path to png must be relative ClassiCube executable |
 | /client ArtBuilder [parameter] [value]                              | Sets [parameter] to [value]                                             |
 
 ### Multiplayer mode
