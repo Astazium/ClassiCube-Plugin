@@ -202,6 +202,10 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         cc_uint8 off;
 
         if (String_CaselessEqualsConst_(&args[1], "stop")) {
+            if (!MPenabled) {
+                Chat_AddRaw("&eYou are not in multiplayer mode.");
+                return;
+            }
             if (!MPbuildRunning) {
                 Chat_AddRaw("&eBuild already stopped.");
                 return;
