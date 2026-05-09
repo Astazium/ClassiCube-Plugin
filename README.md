@@ -30,9 +30,7 @@ For multiplayer, ArtBuilder provides some customizable parameters to control how
 | /client ArtBuilder [teleportRange/tpRange] [int]          | Distance in blocks before teleport to current building position |
 | /client ArtBuilder placeInterval [float value in seconds] | How often blocks will be placed                                 |
 
-# Building
-
-## Visual Studio
+## Setting up for Visual Studio
 1. Clone ClassiCube repo: `git clone https://github.com/ClassiCube/ClassiCube.git`
 2. Go to ClassiCube directory: `cd ClassiCube`
 3. Clone ClassiCube-Plugin repo: `git clone https://github.com/Astazium/ClassiCube-Plugin.git`
