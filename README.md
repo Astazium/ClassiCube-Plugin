@@ -9,8 +9,8 @@ A couple of useful (or not) features for [ClassiCube](https://github.com/ClassiC
 ## AntiAFK
 | Command | Description |
 |---------|-------------|
-| /client AntiAFK [true/false] | Turn AntiAFK on/off                |
-| /client AntiAFK [float value in seconds] | Sets rotating interval |
+| /client AntiAFK [true/false] | Turn AntiAFK on/off                             |
+| /client AntiAFK [float value in seconds] | Sets rotating interval (in seconds) |
 
 ## ArtBuilder
 | Command | Description |
@@ -28,7 +28,7 @@ For multiplayer, ArtBuilder provides some customizable parameters to control how
 | /client ArtBuilder build stop                             | Stops building process (only for multiplayer mode!)             |
 | /client ArtBuilder [multiplayer/mp] [true/false]          | Turn multiplayer mode on/off, sets automaticly                  |
 | /client ArtBuilder [teleportRange/tpRange] [int]          | Distance in blocks before teleport to current building position |
-| /client ArtBuilder placeInterval [float value in seconds] | How often blocks will be placed                                 |
+| /client ArtBuilder placeInterval [float value in seconds] | How often (in seconds) blocks will be placed                                 |
 
 ## Setting up for Visual Studio
 1. Clone ClassiCube repo: `git clone https://github.com/ClassiCube/ClassiCube.git`
