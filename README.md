@@ -31,7 +31,7 @@ For multiplayer, ArtBuilder provides some customizable parameters to control how
 | /client ArtBuilder placeInterval [float value in seconds] | How often (in seconds) blocks will be placed                                 |
 
 ## Setting up for Visual Studio
-1. Clone ClassiCube repo: `git clone https://github.com/ClassiCube/ClassiCube.git`
+1. Open console and clone ClassiCube repo: `git clone https://github.com/ClassiCube/ClassiCube.git`
 2. Go to ClassiCube directory: `cd ClassiCube`
 3. Clone ClassiCube-Plugin repo: `git clone https://github.com/Astazium/ClassiCube-Plugin.git`
 4. Open ClassiCube solution in Visual Studio and create new project in it
