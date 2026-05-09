@@ -542,8 +542,7 @@ static void ShowFSError(const char* contextMsg, cc_result errCode) {
 
 #else
 
-static void ShowFileSystemError(const char* contextMsg, cc_result errCode)
-{
+static void ShowFileSystemError(const char* contextMsg, cc_result errCode) {
     OnceCall(FP_Chat_Add2, CHAT_ADD2_)("&e%c: %i", contextMsg, &errCode);
 }
 

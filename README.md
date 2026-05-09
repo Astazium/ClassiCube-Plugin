@@ -3,7 +3,7 @@ A couple of useful (or not) features for [ClassiCube](https://github.com/ClassiC
 ## Components:
 |  Name  | Description |
 |--------|-------------|
-| [AntiAFK](#antiafk)       | Rotates player in specified amount of time                |
+| [AntiAFK](#antiafk)       | Rotates player with specified interval in seconds         |
 | [ArtBuilder](#artbuilder) | Builds an png image from blocks with specified parameters |
 
 ## AntiAFK

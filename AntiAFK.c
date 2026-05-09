@@ -22,7 +22,7 @@ static const char AntiAfk_Enabled[]  = "&eEnabled.";
 static const char AntiAfk_Disabled[] = "&eDisabled.";
 
 static cc_bool g_Enabled;
-static float   g_Interval = 1.0;
+static float   g_Interval = 1.0f;
 
 static void AntiAfk_Reset(void) {
     if (g_Enabled) {
@@ -68,7 +68,7 @@ static struct ChatCommand AntiAfkCmd = {
     COMMAND_FLAG_UNSPLIT_ARGS,
     {
         "&a/client AntiAFK [true/false or interval in seconds]",
-        "&eRotates you with specified interval in seconds"
+        "&eRotates player with specified interval in seconds"
     }
 };
 
@@ -91,8 +91,5 @@ static void AntiAfk_Init(void) {
 
 static void AntiAfk_OnNewMapLoaded(void) {
     PlayerEntity = &((struct _EntitiesData*)GetGameSymbol(ENTITIES_))->CurPlayer->Base;
-    if (g_Enabled) {
-        g_Enabled = false;
-        Chat_AddRaw(AntiAfk_Disabled);
-    }
+    AntiAfk_Reset();
 }
