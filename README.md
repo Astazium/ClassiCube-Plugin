@@ -37,5 +37,5 @@ For multiplayer, ArtBuilder provides some customizable parameters to control how
 2. Go to ClassiCube directory: `cd ClassiCube`
 3. Clone ClassiCube-Plugin repo: `git clone https://github.com/Astazium/ClassiCube-Plugin.git`
 4. Open ClassiCube solution in Visual Studio and create new project in it
-6. Open your project properties and in "Configuration Type" choose "Dynamic Library (.dll)"
+6. Open your project properties and in "Configuration Type" choose "Dynamic Library (.dll)". Don`t forget to change it for all configurations!
 7. Click on project, Add -> Existing Item, go to ClassiCube-Plugin directory and select all files
