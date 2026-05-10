@@ -1,4 +1,4 @@
-# ClassiCube-Plugin
+# SomeTweaksPlugin
 A couple of useful (or not) features for [ClassiCube](https://github.com/ClassiCube/ClassiCube) in one plugin!
 # Components:
 ## AntiAFK
