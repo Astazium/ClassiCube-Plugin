@@ -519,7 +519,6 @@ static void ArtBuilder_OnNewMapLoaded(void) {
     cc_bool   hasCPE;
     struct _ServerConnectionData* Server_ = GetGameSymbol(SERVER_);
 
-    MPmode.exitOnFinish = false;
     hasCPE = OnceCall(FP_Options_GetBool, OPTIONS_GETBOOL_)(OPT_CPE, true);
     blockCount = hasCPE ? BLOCK_MAX_CPE : BLOCK_MAX_ORIGINAL;
     OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eHas CPE: %t", &hasCPE);
