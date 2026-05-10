@@ -176,9 +176,10 @@ struct {
 static void FreeImage(void) {
     MPbuildRunning = false;
     OnceCall(FP_Mem_Free, MEM_FREE_)(Image.bmp.scan0);
+    Image.bmp.scan0 = NULL;
 }
 
-static struct Entity* PlayerEntity = NULL;
+static struct Entity* PlayerEntity;
 
 static void ArtBuilder_Build(const IVec2* dir);
 static void ShowFSError(const char* contextMsg, cc_result errCode);
