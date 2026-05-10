@@ -361,6 +361,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
     }
 
     if (String_CaselessEqualsConst_(&args[0], "placeInterval")) {
+        char msgBuf[256]; cc_string msgStr;
         float placeInterval;
         if (!OnceCall(FP_Convert_ParseFloat, CONVERT_PARSEFLOAT_)(&args[1], &placeInterval)) {
             Chat_AddRaw("&eCould not parse value.");
@@ -371,7 +372,10 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
             return;
         }
         MPmode.placeInterval = placeInterval;
-        Chat_Add1_("&eBlock place interval setted to: %f2", &placeInterval);
+        String_InitArray(msgStr, msgBuf);
+        OnceCall(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eBlock place interval setted to: ");
+        Time_FormatSeconds(&msgStr, placeInterval);
+        OnceCall(FP_Chat_Add, CHAT_ADD_)(&msgStr);
         return;
     }
 
