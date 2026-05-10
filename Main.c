@@ -18,26 +18,28 @@ static const struct IGameComponent* const comps[] = {
 #undef DeclareComp
 
 #define RegisterCompsEvent(callback)    \
-static void Main_##callback(void) {     \
-    unsigned comp = 0;                  \
-    while (comps[comp]) {               \
-        if (comps[comp]->callback) {    \
-            comps[comp]->callback();    \
-        }                               \
-        ++comp;                         \
+unsigned comp = 0;                      \
+while (comps[comp]) {                   \
+    if (comps[comp]->callback) {        \
+        comps[comp]->callback();        \
     }                                   \
+    ++comp;                             \
 }
 
-RegisterCompsEvent(OnNewMapLoaded)
-RegisterCompsEvent(Init)
+static void Main_Init(void)           { RegisterCompsEvent(Init) }
+static void Main_Free(void)           { RegisterCompsEvent(Free) }
+static void Main_Reset(void)          { RegisterCompsEvent(Reset) }
+static void Main_OnNewMap(void)       { RegisterCompsEvent(OnNewMap) }
+static void Main_OnNewMapLoaded(void) { RegisterCompsEvent(OnNewMapLoaded) }
 
 #undef RegisterCompsEvent
+#undef CompsDeclList
 
 PLUGIN_EXPORT int Plugin_ApiVersion = 1;
 PLUGIN_EXPORT struct IGameComponent Plugin_Component = { 
     Main_Init, /* Init */
-    NULL, /* Free */
-    NULL, /* Reset */
-    NULL, /* OnNewMap */
+    Main_Free, /* Free */
+    Main_Reset, /* Reset */
+    Main_OnNewMap, /* OnNewMap */
     Main_OnNewMapLoaded /* OnNewMapLoaded */
 };

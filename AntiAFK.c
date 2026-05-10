@@ -38,9 +38,9 @@ static void AntiAfk_Execute(const cc_string* args, int argsCount) {
         Chat_AddRaw("&eToo few arguments.");
         return;
     }
-    if (!OnceCall(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(args, &enabled)) {
+    if (!GetFP(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(args, &enabled)) {
         float interval;
-        if (OnceCall(FP_Convert_ParseFloat, CONVERT_PARSEFLOAT_)(args, &interval)) {
+        if (GetFP(FP_Convert_ParseFloat, CONVERT_PARSEFLOAT_)(args, &interval)) {
             char msgBuf[256];
             cc_string msgStr;
             if (interval < 0.2f) {
@@ -48,10 +48,10 @@ static void AntiAfk_Execute(const cc_string* args, int argsCount) {
                 return;
             }
             String_InitArray(msgStr, msgBuf);
-            OnceCall(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eInterval updated to ");
+            GetFP(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eInterval updated to ");
             Time_FormatSeconds(&msgStr, interval);
             g_Interval = interval;
-            OnceCall(FP_Chat_Add, CHAT_ADD_)(&msgStr);
+            GetFP(FP_Chat_Add, CHAT_ADD_)(&msgStr);
             return;
         }
         Chat_AddRaw("&eCould not parse value.");
@@ -91,11 +91,11 @@ static void AntiAfk_Task(struct ScheduledTask* task) {
 }
 
 static void AntiAfk_Init(void) {
-    OnceCall(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(g_Interval, AntiAfk_Task);
-    OnceCall(FP_Commands_Register, COMMANDS_REGISTER_)(&AntiAfkCmd);
+    GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(g_Interval, AntiAfk_Task);
+    GetFP(FP_Commands_Register, COMMANDS_REGISTER_)(&AntiAfkCmd);
 }
 
 static void AntiAfk_OnNewMapLoaded(void) {
-    PlayerEntity = &((struct _EntitiesData*)GetGameSymbol(ENTITIES_))->CurPlayer->Base;
+    PlayerEntity = &TempVar(struct _EntitiesData*, ENTITIES_)->CurPlayer->Base;
     AntiAfk_Reset();
 }

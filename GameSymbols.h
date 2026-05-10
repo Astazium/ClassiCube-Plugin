@@ -54,7 +54,7 @@ DeclareSymbol(CHAT_ADD2_,			Chat_Add2)							\
 DeclareSymbol(CHAT_ADD3_,			Chat_Add3)							\
 DeclareSymbol(CHAT_ADD4_,			Chat_Add4)							\
 /* Strings */															\
-DeclareSymbol(STRING_APPENDCONST_, String_AppendConst)					\
+DeclareSymbol(STRING_APPENDCONST_,  String_AppendConst)					\
 DeclareSymbol(STRING_FORMAT1_,		String_Format1)						\
 DeclareSymbol(STRING_FORMAT4_,		String_Format4)						\
 DeclareSymbol(STRING_FORMAT2_,		String_Format2)						\
@@ -93,6 +93,9 @@ void* const GetGameSymbol(enum GAMESYMBOL gameSymbol);
 RawSymbol   GetGameRawSymbol(enum GAMESYMBOL gameSymbol);
 
 /*For performance reasons, don't use this in loops*/
-#define OnceCall(type, gameSymbol) ((type)GetGameRawSymbol(gameSymbol))
+#define GetFP(type, gameSymbol) ((type)GetGameRawSymbol(gameSymbol))
+
+/*For performance reasons, don't use this in loops*/
+#define TempVar(type, gameSymbol) ((type)GetGameSymbol(gameSymbol))
 
 #endif

@@ -183,14 +183,14 @@ static void Chat_PrintBuildingETA(void) {
     char msgBuf[256]; cc_string msgStr;
     String_InitArray(msgStr, msgBuf);
 
-    OnceCall(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eRemaining time: ");
+    GetFP(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eRemaining time: ");
     Time_FormatSeconds(&msgStr, (float)remainingBlocks * MPmode.placeInterval);
-    OnceCall(FP_Chat_Add, CHAT_ADD_)(&msgStr);
+    GetFP(FP_Chat_Add, CHAT_ADD_)(&msgStr);
 }
 
 static void FreeImage(void) {
     MPmode.buildRunning = false;
-    OnceCall(FP_Mem_Free, MEM_FREE_)(Image.bmp.scan0);
+    GetFP(FP_Mem_Free, MEM_FREE_)(Image.bmp.scan0);
     Image.bmp.scan0 = NULL;
 }
 
@@ -206,9 +206,9 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
     FP_Convert_ParseInt Convert_ParseInt_;
     FP_Chat_Add1 Chat_Add1_;
 
-    String_CaselessEqualsConst_ = (FP_String_CaselessEqualsConst)GetGameRawSymbol(STRING_CASELESSEQUALSCONST_);
-    Convert_ParseInt_ = (FP_Convert_ParseInt)GetGameRawSymbol(CONVERT_PARSEINT_);
-    Chat_Add1_ = (FP_Chat_Add1)GetGameRawSymbol(CHAT_ADD1_);
+    String_CaselessEqualsConst_ = GetFP(FP_String_CaselessEqualsConst, STRING_CASELESSEQUALSCONST_);
+    Convert_ParseInt_ = GetFP(FP_Convert_ParseInt, CONVERT_PARSEINT_);
+    Chat_Add1_ = GetFP(FP_Chat_Add1, CHAT_ADD1_);
 
     if (argsCount == 1) {
         Chat_AddRaw("&eToo few arguments.");
@@ -296,12 +296,12 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
             dir.x = ((pitch + 45) / 90) * 90;
             dir.y = ((yaw + 45) / 90) * 90 - 90;
         }
-        fileSystemErr = OnceCall(FP_Stream_OpenFile, STREAM_OPENFILE_)(&s, &args[1]);
+        fileSystemErr = GetFP(FP_Stream_OpenFile, STREAM_OPENFILE_)(&s, &args[1]);
         if (fileSystemErr) {
             ShowFSError("Could not open the image", fileSystemErr);
             return;
         }
-        pngDecodeErr = OnceCall(FP_Png_Decode, PNG_DECODE_)(&Image.bmp, &s);
+        pngDecodeErr = GetFP(FP_Png_Decode, PNG_DECODE_)(&Image.bmp, &s);
         if (pngDecodeErr) {
             Chat_Add1_("&eCould not decode png: %c", Png_GetErrorString(pngDecodeErr));
             return;
@@ -315,7 +315,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         String_CaselessEqualsConst_(&args[0], "mp")) 
     {
         cc_bool enabled;
-        if (!OnceCall(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(&args[1], &enabled)) {
+        if (!GetFP(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(&args[1], &enabled)) {
             Chat_AddRaw("&eCould not parse value.");
             return;
         }
@@ -330,7 +330,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
 
     if (String_CaselessEqualsConst_(&args[0], "exitOnFinish")) {
         cc_bool exitOnFinish;
-        if (!OnceCall(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(&args[1], &exitOnFinish)) {
+        if (!GetFP(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(&args[1], &exitOnFinish)) {
             Chat_AddRaw("&eCould not parse value.");
             return;
         }
@@ -363,7 +363,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
     if (String_CaselessEqualsConst_(&args[0], "placeInterval")) {
         char msgBuf[256]; cc_string msgStr;
         float placeInterval;
-        if (!OnceCall(FP_Convert_ParseFloat, CONVERT_PARSEFLOAT_)(&args[1], &placeInterval)) {
+        if (!GetFP(FP_Convert_ParseFloat, CONVERT_PARSEFLOAT_)(&args[1], &placeInterval)) {
             Chat_AddRaw("&eCould not parse value.");
             return;
         }
@@ -373,9 +373,9 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         }
         MPmode.placeInterval = placeInterval;
         String_InitArray(msgStr, msgBuf);
-        OnceCall(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eBlock place interval setted to: ");
+        GetFP(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eBlock place interval setted to: ");
         Time_FormatSeconds(&msgStr, placeInterval);
-        OnceCall(FP_Chat_Add, CHAT_ADD_)(&msgStr);
+        GetFP(FP_Chat_Add, CHAT_ADD_)(&msgStr);
         return;
     }
 
@@ -399,8 +399,8 @@ static void ArtBuilder_Build(const IVec2* dir) {
     FP_Math_SinF Math_SinF_;
     FP_Math_CosF Math_CosF_;
 
-    Math_SinF_ = (FP_Math_SinF)GetGameRawSymbol(MATH_SINF_);
-    Math_CosF_ = (FP_Math_CosF)GetGameRawSymbol(MATH_COSF_);
+    Math_SinF_ = GetFP(FP_Math_SinF, MATH_SINF_);
+    Math_CosF_ = GetFP(FP_Math_CosF, MATH_COSF_);
 
     Image.right.x = Math_CosF_(yawRad);
     Image.right.y = 0.0f;
@@ -450,7 +450,7 @@ static void ArtBuilder_SPBuild(void) {
                 Game_ChangeBlock_(buildPos.x, buildPos.y, buildPos.z, block);
         }
     }
-    OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eSuccessfully builded %i blocks.", &totalBlocks);
+    GetFP(FP_Chat_Add1, CHAT_ADD1_)("&eSuccessfully builded %i blocks.", &totalBlocks);
     FreeImage();
 }
 
@@ -461,10 +461,10 @@ static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
 
     if (Image.y >= Image.bmp.height) {
         int totalBlocks = Image.bmp.width * Image.bmp.height;
-        OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eSuccessfully builded %i blocks.", &totalBlocks);
+        GetFP(FP_Chat_Add1, CHAT_ADD1_)("&eSuccessfully builded %i blocks.", &totalBlocks);
         FreeImage();
         if (MPmode.exitOnFinish)
-            OnceCall(FP_Process_Exit, PROCESS_EXIT_)(0);
+            GetFP(FP_Process_Exit, PROCESS_EXIT_)(0);
         return;
     }
 
@@ -519,26 +519,25 @@ static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
 }
 
 static void ArtBuilder_Init(void) {
-    OnceCall(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(MPmode.placeInterval, ArtBuilder_MPBuildTask);
-    OnceCall(FP_Commands_Register, COMMANDS_REGISTER_)(&BuildImageCmd);
+    GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(MPmode.placeInterval, ArtBuilder_MPBuildTask);
+    GetFP(FP_Commands_Register, COMMANDS_REGISTER_)(&BuildImageCmd);
 }
 
 static void ArtBuilder_OnNewMapLoaded(void) {
     cc_bool   hasCPE;
-    struct _ServerConnectionData* Server_ = GetGameSymbol(SERVER_);
 
-    hasCPE = OnceCall(FP_Options_GetBool, OPTIONS_GETBOOL_)(OPT_CPE, true);
+    hasCPE = GetFP(FP_Options_GetBool, OPTIONS_GETBOOL_)(OPT_CPE, true);
     blockCount = hasCPE ? BLOCK_MAX_CPE : BLOCK_MAX_ORIGINAL;
-    OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eHas CPE: %t", &hasCPE);
+    GetFP(FP_Chat_Add1, CHAT_ADD1_)("&eHas CPE: %t", &hasCPE);
     TakeAverageBlocksColor();
 
-    PlayerEntity = &((struct _EntitiesData*)GetGameSymbol(ENTITIES_))->CurPlayer->Base;
+    PlayerEntity = &TempVar(struct _EntitiesData*, ENTITIES_)->CurPlayer->Base;
     World_ = GetGameSymbol(WORLD_);
-    Game_ChangeBlock_ = (FP_Game_ChangeBlock)GetGameRawSymbol(GAME_CHANGEBLOCK_);
+    Game_ChangeBlock_ = GetFP(FP_Game_ChangeBlock, GAME_CHANGEBLOCK_);
 
     FreeImage();
 
-    if (!Server_->IsSinglePlayer) {
+    if (!TempVar(struct _ServerConnectionData*, SERVER_)->IsSinglePlayer) {
         MPmode.enabled = true;
         Chat_AddRaw("&eYou are currently in multiplayer");
         Chat_AddRaw("&eArtBuilder mode setted to multiplayer");
@@ -571,7 +570,7 @@ static void ShowFSError(const char* contextMsg, cc_result errCode) {
     {
         cc_string errCodeStr; char errCodeBuf[512];
         String_InitArray_NT(errCodeStr, errCodeBuf);
-        OnceCall(FP_String_Format1, STRING_FORMAT1_)(&errCodeStr, "Error code: %i", &errCode);
+        GetFP(FP_String_Format1, STRING_FORMAT1_)(&errCodeStr, "Error code: %i", &errCode);
         errCodeStr.buffer[errCodeStr.length] = '\0';
         Window_ShowDialog_(contextMsg, errCodeStr.buffer);
         return;
@@ -582,9 +581,10 @@ static void ShowFSError(const char* contextMsg, cc_result errCode) {
 }
 
 #else
+#define _GNU_SOURCE
 
-static void ShowFileSystemError(const char* contextMsg, cc_result errCode) {
-    OnceCall(FP_Chat_Add2, CHAT_ADD2_)("&e%c: %i", contextMsg, &errCode);
+static void ShowFSError(const char* contextMsg, cc_result errCode) {
+    GetFP(FP_Chat_Add2, CHAT_ADD2_)("&e%c: %i", contextMsg, &errCode);
 }
 
 #endif
