@@ -176,6 +176,18 @@ struct {
     int y;
 } Image;
 
+static void Chat_PrintBuildingETA(void) {
+    int totalBlocks = Image.bmp.width * Image.bmp.height;
+    int placedBlocks = Image.y * Image.bmp.width + Image.x;
+    int remainingBlocks = totalBlocks - placedBlocks;
+    char msgBuf[256]; cc_string msgStr;
+    String_InitArray(msgStr, msgBuf);
+
+    OnceCall(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eRemaining time: ");
+    Time_FormatSeconds(&msgStr, (float)remainingBlocks * MPmode.placeInterval);
+    OnceCall(FP_Chat_Add, CHAT_ADD_)(&msgStr);
+}
+
 static void FreeImage(void) {
     MPmode.buildRunning = false;
     OnceCall(FP_Mem_Free, MEM_FREE_)(Image.bmp.scan0);
@@ -227,9 +239,6 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         }
 
         if (String_CaselessEqualsConst_(&args[1], "eta")) {
-            int totalBlocks, placedBlocks, remainingBlocks;
-            char msgBuf[256];
-            cc_string msgStr;
             if (!MPmode.enabled) {
                 Chat_AddRaw("&eYou are not in multiplayer mode.");
                 return;
@@ -238,13 +247,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
                 Chat_AddRaw("&eBuild already stopped.");
                 return;
             }
-            String_InitArray(msgStr, msgBuf);
-            totalBlocks = Image.bmp.width * Image.bmp.height;
-            placedBlocks = Image.y * Image.bmp.width + Image.x;
-            remainingBlocks = totalBlocks - placedBlocks;
-            OnceCall(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eRemaining time: ");
-            Time_FormatSeconds(&msgStr, remainingBlocks * MPmode.placeInterval);
-            OnceCall(FP_Chat_Add, CHAT_ADD_)(&msgStr);
+            Chat_PrintBuildingETA();
             return;
         }
 
@@ -408,6 +411,7 @@ static void ArtBuilder_Build(const IVec2* dir) {
 
     if (MPmode.enabled) {
         MPmode.buildRunning = true;
+        Chat_PrintBuildingETA();
     } else {
         ArtBuilder_SPBuild();
     }
@@ -430,6 +434,7 @@ static void GetBuildPos(IVec3* out) {
 }
 
 static void ArtBuilder_SPBuild(void) {
+    int totalBlocks = Image.bmp.width * Image.bmp.height;
     for (Image.y = 0; Image.y < Image.bmp.height; ++Image.y) {
         BitmapCol* row = Bitmap_GetRow(&Image.bmp, Image.bmp.height - 1 - Image.y);
         for (Image.x = 0; Image.x < Image.bmp.width; ++Image.x) {
@@ -441,7 +446,6 @@ static void ArtBuilder_SPBuild(void) {
                 Game_ChangeBlock_(buildPos.x, buildPos.y, buildPos.z, block);
         }
     }
-    int totalBlocks = Image.bmp.width * Image.bmp.height;
     OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eSuccessfully builded %i blocks.", &totalBlocks);
     FreeImage();
 }
