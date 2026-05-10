@@ -2,6 +2,7 @@
 #include "../src/Entity.h"
 #include "../src/Game.h"
 #include "../src/Server.h"
+#include "../src/Chat.h"
 
 #include "GameSymbols.h"
 #include "Utils.h"
@@ -40,12 +41,17 @@ static void AntiAfk_Execute(const cc_string* args, int argsCount) {
     if (!OnceCall(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(args, &enabled)) {
         float interval;
         if (OnceCall(FP_Convert_ParseFloat, CONVERT_PARSEFLOAT_)(args, &interval)) {
+            char msgBuf[256];
+            cc_string msgStr;
             if (interval < 0.2f) {
                 Chat_AddRaw("&eInterval is too small.");
                 return;
             }
+            String_InitArray(msgStr, msgBuf);
+            OnceCall(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eInterval updated to ");
+            Time_FormatSeconds(&msgStr, interval);
             g_Interval = interval;
-            OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eInterval updated to %f2 sec.", &interval);
+            OnceCall(FP_Chat_Add, CHAT_ADD_)(&msgStr);
             return;
         }
         Chat_AddRaw("&eCould not parse value.");

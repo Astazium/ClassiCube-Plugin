@@ -159,10 +159,13 @@ static const char* Png_GetErrorString(cc_result pngErr) {
 
 typedef struct IVec2_ { int x, y; } IVec2;
 
-static int     MPteleportRange = 6;
-static float   MPplaceInterval = 0.08f;
-static cc_bool MPbuildRunning  = false;
-static cc_bool MPenabled       = false;
+struct {
+    int     teleportRange;
+    float   placeInterval;
+    cc_bool exitOnFinish;
+    cc_bool buildRunning;
+    cc_bool enabled;
+} MPmode = {6, 0.08f, false, false, false};
 
 struct {
     struct Bitmap bmp;
@@ -174,7 +177,7 @@ struct {
 } Image;
 
 static void FreeImage(void) {
-    MPbuildRunning = false;
+    MPmode.buildRunning = false;
     OnceCall(FP_Mem_Free, MEM_FREE_)(Image.bmp.scan0);
     Image.bmp.scan0 = NULL;
 }
@@ -195,29 +198,53 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
     Convert_ParseInt_ = (FP_Convert_ParseInt)GetGameRawSymbol(CONVERT_PARSEINT_);
     Chat_Add1_ = (FP_Chat_Add1)GetGameRawSymbol(CHAT_ADD1_);
 
+    if (argsCount == 1) {
+        Chat_AddRaw("&eToo few arguments.");
+        return;
+    }
+
     if (String_CaselessEqualsConst_(&args[0], "build")) {
         cc_result fileSystemErr;
         cc_result pngDecodeErr;
         struct Stream s;
         IVec2 dir;
         cc_uint8 off;
-
-        if (argsCount == 1) {
-            Chat_AddRaw("&eToo few arguments.");
-            return;
-        }
         
         if (String_CaselessEqualsConst_(&args[1], "stop")) {
-            if (!MPenabled) {
+            int placedBlocks;
+            if (!MPmode.enabled) {
                 Chat_AddRaw("&eYou are not in multiplayer mode.");
                 return;
             }
-            if (!MPbuildRunning) {
+            if (!MPmode.buildRunning) {
                 Chat_AddRaw("&eBuild already stopped.");
                 return;
             }
+            placedBlocks = Image.y * Image.bmp.width + Image.x;
+            Chat_Add1_("&eBuild stopped, %i blocks were builded.", &placedBlocks);
             FreeImage();
-            Chat_AddRaw("&eBuild stopped.");
+            return;
+        }
+
+        if (String_CaselessEqualsConst_(&args[1], "eta")) {
+            int totalBlocks, placedBlocks, remainingBlocks;
+            char msgBuf[256];
+            cc_string msgStr;
+            if (!MPmode.enabled) {
+                Chat_AddRaw("&eYou are not in multiplayer mode.");
+                return;
+            }
+            if (!MPmode.buildRunning) {
+                Chat_AddRaw("&eBuild already stopped.");
+                return;
+            }
+            String_InitArray(msgStr, msgBuf);
+            totalBlocks = Image.bmp.width * Image.bmp.height;
+            placedBlocks = Image.y * Image.bmp.width + Image.x;
+            remainingBlocks = totalBlocks - placedBlocks;
+            OnceCall(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eRemaining time: ");
+            Time_FormatSeconds(&msgStr, remainingBlocks * MPmode.placeInterval);
+            OnceCall(FP_Chat_Add, CHAT_ADD_)(&msgStr);
             return;
         }
 
@@ -226,7 +253,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
             return;
         }
 
-        if (MPbuildRunning) {
+        if (MPmode.buildRunning) {
             Chat_AddRaw("&eBuild already running.");
             return;
         }
@@ -241,8 +268,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
                 Chat_AddRaw("&eCould not parse coordinates.");
                 return;
             }
-        }
-        else {
+        } else {
             Image.pos.x = (int)PlayerEntity->Position.x;
             Image.pos.y = (int)PlayerEntity->Position.y;
             Image.pos.z = (int)PlayerEntity->Position.z;
@@ -261,8 +287,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
                 Chat_AddRaw("&eCould not parse direction.");
                 return;
             }
-        }
-        else {
+        } else {
             int pitch = (int)PlayerEntity->Pitch;
             int yaw   = (int)PlayerEntity->Yaw;
             dir.x = ((pitch + 45) / 90) * 90;
@@ -282,20 +307,16 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         ArtBuilder_Build(&dir);
         return;
     }
-    
+
     if (String_CaselessEqualsConst_(&args[0], "multiplayer") ||
         String_CaselessEqualsConst_(&args[0], "mp")) 
     {
         cc_bool enabled;
-        if (argsCount == 1) {
-            Chat_AddRaw("&eToo few arguments.");
-            return;
-        }
         if (!OnceCall(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(&args[1], &enabled)) {
             Chat_AddRaw("&eCould not parse value.");
             return;
         }
-        MPenabled = enabled;
+        MPmode.enabled = enabled;
         if (enabled) {
             Chat_AddRaw("&eMultiplayer Mode enabled.");
         } else {
@@ -304,14 +325,25 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         return;
     }
 
+    if (String_CaselessEqualsConst_(&args[0], "exitOnFinish")) {
+        cc_bool exitOnFinish;
+        if (!OnceCall(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(&args[1], &exitOnFinish)) {
+            Chat_AddRaw("&eCould not parse value.");
+            return;
+        }
+        MPmode.exitOnFinish = exitOnFinish;
+        if (exitOnFinish) {
+            Chat_AddRaw("&eExit on finish enabled.");
+        } else {
+            Chat_AddRaw("&eExit on finish disabled.");
+        }
+        return;
+    }
+
     if (String_CaselessEqualsConst_(&args[0], "teleportrange") ||
         String_CaselessEqualsConst_(&args[0], "tprange")) 
     {
         int teleportRange;
-        if (argsCount == 1) {
-            Chat_AddRaw("&eToo few arguments.");
-            return;
-        }
         if (!Convert_ParseInt_(&args[1], &teleportRange)) {
             Chat_AddRaw("&eCould not parse value.");
             return;
@@ -320,17 +352,13 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
             Chat_AddRaw("&eTeleport range is too small.");
             return;
         }
-        MPteleportRange = teleportRange;
+        MPmode.teleportRange = teleportRange;
         Chat_Add1_("&eTeleport range setted to: %i", &teleportRange);
         return;
     }
 
     if (String_CaselessEqualsConst_(&args[0], "placeInterval")) {
         float placeInterval;
-        if (argsCount == 1) {
-            Chat_AddRaw("&eToo few arguments.");
-            return;
-        }
         if (!OnceCall(FP_Convert_ParseFloat, CONVERT_PARSEFLOAT_)(&args[1], &placeInterval)) {
             Chat_AddRaw("&eCould not parse value.");
             return;
@@ -339,7 +367,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
             Chat_AddRaw("&eBlock place interval is too small.");
             return;
         }
-        MPplaceInterval = placeInterval;
+        MPmode.placeInterval = placeInterval;
         Chat_Add1_("&eBlock place interval setted to: %f2", &placeInterval);
         return;
     }
@@ -378,8 +406,8 @@ static void ArtBuilder_Build(const IVec2* dir) {
     Image.x = 0;
     Image.y = 0;
 
-    if (MPenabled) {
-        MPbuildRunning = true;
+    if (MPmode.enabled) {
+        MPmode.buildRunning = true;
     } else {
         ArtBuilder_SPBuild();
     }
@@ -413,16 +441,22 @@ static void ArtBuilder_SPBuild(void) {
                 Game_ChangeBlock_(buildPos.x, buildPos.y, buildPos.z, block);
         }
     }
+    int totalBlocks = Image.bmp.width * Image.bmp.height;
+    OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eSuccessfully builded %i blocks.", &totalBlocks);
     FreeImage();
 }
 
 static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
     BitmapCol* row;
-    task->interval = MPplaceInterval;
-    if (!MPenabled || !MPbuildRunning) return;
+    task->interval = MPmode.placeInterval;
+    if (!MPmode.enabled || !MPmode.buildRunning) return;
 
     if (Image.y >= Image.bmp.height) {
+        int totalBlocks = Image.bmp.width * Image.bmp.height;
+        OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eSuccessfully builded %i blocks.", &totalBlocks);
         FreeImage();
+        if (MPmode.exitOnFinish)
+            OnceCall(FP_Process_Exit, PROCESS_EXIT_)(0);
         return;
     }
 
@@ -441,20 +475,20 @@ static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
         update.flags = LU_HAS_POS;
         update.pos = playerPos;
 
-        if (playerPos.x > buildPos.x + MPteleportRange ||
-            playerPos.x < buildPos.x - MPteleportRange)
+        if (playerPos.x > buildPos.x + MPmode.teleportRange ||
+            playerPos.x < buildPos.x - MPmode.teleportRange)
         {
             update.pos.x = (float)buildPos.x;
             isPlayerTP = true;
         }
-        if (playerPos.y > buildPos.y + MPteleportRange ||
-            playerPos.y < buildPos.y - MPteleportRange)
+        if (playerPos.y > buildPos.y + MPmode.teleportRange ||
+            playerPos.y < buildPos.y - MPmode.teleportRange)
         {
             update.pos.y = (float)buildPos.y;
             isPlayerTP = true;
         }
-        if (playerPos.z > buildPos.z + MPteleportRange ||
-            playerPos.z < buildPos.z - MPteleportRange)
+        if (playerPos.z > buildPos.z + MPmode.teleportRange ||
+            playerPos.z < buildPos.z - MPmode.teleportRange)
         {
             update.pos.z = (float)buildPos.z;
             isPlayerTP = true;
@@ -477,7 +511,7 @@ static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
 }
 
 static void ArtBuilder_Init(void) {
-    OnceCall(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(MPplaceInterval, ArtBuilder_MPBuildTask);
+    OnceCall(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(MPmode.placeInterval, ArtBuilder_MPBuildTask);
     OnceCall(FP_Commands_Register, COMMANDS_REGISTER_)(&BuildImageCmd);
 }
 
@@ -485,6 +519,7 @@ static void ArtBuilder_OnNewMapLoaded(void) {
     cc_bool   hasCPE;
     struct _ServerConnectionData* Server_ = GetGameSymbol(SERVER_);
 
+    MPmode.exitOnFinish = false;
     hasCPE = OnceCall(FP_Options_GetBool, OPTIONS_GETBOOL_)(OPT_CPE, true);
     blockCount = hasCPE ? BLOCK_MAX_CPE : BLOCK_MAX_ORIGINAL;
     OnceCall(FP_Chat_Add1, CHAT_ADD1_)("&eHas CPE: %t", &hasCPE);
@@ -497,11 +532,12 @@ static void ArtBuilder_OnNewMapLoaded(void) {
     FreeImage();
 
     if (!Server_->IsSinglePlayer) {
-        MPenabled = true;
-        Chat_AddRaw("&eBuildImage mode setted to multiplayer");
-        Chat_AddRaw("&eTo turn it off, type /client BuildImage multiplayer false");
+        MPmode.enabled = true;
+        Chat_AddRaw("&eYou are currently in multiplayer");
+        Chat_AddRaw("&eArtBuilder mode setted to multiplayer");
+        Chat_AddRaw("&eTo turn it off, type /client ArtBuilder mp false");
     } else {
-        MPenabled = false;
+        MPmode.enabled = false;
     }
 }
 

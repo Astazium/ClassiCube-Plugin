@@ -17,8 +17,8 @@ typedef void(*FP_Window_ShowDialog)(const char* title, const char* msg);
 /*typedef void(*FP_ScheduledTask2_Add)(struct ScheduledTask2* task);*/
 typedef void(*FP_ScheduledTask_Add)(double interval, ScheduledTaskCallback callback);
 typedef cc_string(*FP_String_FromReadonly)(STRING_REF const char* buffer);
-
-typedef void (*FP_Mem_Free)(void* mem);
+typedef void(*FP_Mem_Free)(void* mem);
+typedef void(*FP_Process_Exit)(cc_result code);
 
 /* Convert */
 typedef cc_bool(*FP_Convert_ParseBool)(const cc_string* str, cc_bool* value);
@@ -54,6 +54,7 @@ DeclareSymbol(CHAT_ADD2_,			Chat_Add2)							\
 DeclareSymbol(CHAT_ADD3_,			Chat_Add3)							\
 DeclareSymbol(CHAT_ADD4_,			Chat_Add4)							\
 /* Strings */															\
+DeclareSymbol(STRING_APPENDCONST_, String_AppendConst)					\
 DeclareSymbol(STRING_FORMAT1_,		String_Format1)						\
 DeclareSymbol(STRING_FORMAT4_,		String_Format4)						\
 DeclareSymbol(STRING_FORMAT2_,		String_Format2)						\
@@ -75,6 +76,7 @@ DeclareSymbol(OPTIONS_GETBOOL_,		Options_GetBool)					\
 DeclareSymbol(STREAM_OPENFILE_,		Stream_OpenFile)					\
 DeclareSymbol(MEM_FREE_,			Mem_Free)							\
 DeclareSymbol(PNG_DECODE_,			Png_Decode)							\
+DeclareSymbol(PROCESS_EXIT_,		Process_Exit)						\
 DeclareSymbol(WINDOW_SHOWDIALOG_,   Window_ShowDialog)
 
 #define DeclareSymbol(enumName, symbolName) enumName,
