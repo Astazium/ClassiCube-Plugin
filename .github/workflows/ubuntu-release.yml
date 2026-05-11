@@ -15,10 +15,8 @@ jobs:
     - name: Clone ClassiCube
       run: git clone https://github.com/ClassiCube/ClassiCube.git
 
-    - name: Clone plugin
-      run: |
-        cd ClassiCube
-        git clone https://github.com/Astazium/SomeTweaksPlugin.git
+    - name: Move plugin
+      run: mv "$GITHUB_WORKSPACE" ClassiCube/SomeTweaksPlugin
 
     - name: Build
       run: |
