@@ -1,8 +1,7 @@
-#include "../src/Commands.h"
-#include "../src/Entity.h"
-#include "../src/Game.h"
-#include "../src/Server.h"
-#include "../src/Chat.h"
+#include "../../src/Commands.h"
+#include "../../src/Entity.h"
+#include "../../src/Game.h"
+#include "../../src/Chat.h"
 
 #include "GameSymbols.h"
 #include "Utils.h"

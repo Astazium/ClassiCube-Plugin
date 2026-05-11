@@ -1,5 +1,5 @@
 #include "GameSymbols.h"
-#include "../src/Game.h"
+#include "../../src/Game.h"
 
 static void LoadSymbolsFromGame(void);
 
