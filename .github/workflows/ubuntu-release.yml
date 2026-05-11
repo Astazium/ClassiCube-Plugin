@@ -21,4 +21,4 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v4
       with:
-        path: build/
+        path: build/release/*.so
