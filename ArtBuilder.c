@@ -223,7 +223,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
     Convert_ParseInt_ = GetFP(FP_Convert_ParseInt, CONVERT_PARSEINT_);
     Chat_Add1_ = GetFP(FP_Chat_Add1, CHAT_ADD1_);
 
-    if (argsCount == 1) {
+    if (argsCount == 0 || argsCount == 1) {
         Chat_AddRaw("&eToo few arguments.");
         return;
     }
