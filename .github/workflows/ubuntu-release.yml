@@ -15,7 +15,7 @@ jobs:
     - name: Clone ClassiCube
       run: | 
         git clone https://github.com/ClassiCube/ClassiCube.git
-        ln -s ClassiCube ./Includes
+        mv . ./ClassiCube
 
     - name: Build
       run: make
