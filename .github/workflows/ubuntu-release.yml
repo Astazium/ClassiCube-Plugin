@@ -18,6 +18,4 @@ jobs:
         ln -s ClassiCube ./Includes
 
     - name: Build
-      run: |
-        cd ClassiCube/SomeTweaksPlugin
-        make
+      run: make
