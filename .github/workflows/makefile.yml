@@ -1,0 +1,26 @@
+name: Makefile CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Clone ClassiCube
+      run: git clone https://github.com/ClassiCube/ClassiCube.git
+
+    - name: Clone plugin
+      run: |
+        cd ClassiCube
+        git clone https://github.com/Astazium/SomeTweaksPlugin.git
+
+    - name: Build
+      run: |
+        cd ClassiCube/SomeTweaksPlugin
+        make
