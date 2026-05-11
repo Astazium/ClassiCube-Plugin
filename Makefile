@@ -1,4 +1,4 @@
-LIB_NAME = mylib
+LIB_NAME = SomeTweaksPlugin
 
 CC = gcc
 
