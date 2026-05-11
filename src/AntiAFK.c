@@ -1,7 +1,7 @@
-#include "../../src/Commands.h"
-#include "../../src/Entity.h"
-#include "../../src/Game.h"
-#include "../../src/Chat.h"
+#include "../ClassiCube/src/Commands.h"
+#include "../ClassiCube/src/Entity.h"
+#include "../ClassiCube/src/Game.h"
+#include "../ClassiCube/src/Chat.h"
 
 #include "GameSymbols.h"
 #include "Utils.h"

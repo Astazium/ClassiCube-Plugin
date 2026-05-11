@@ -1,8 +1,8 @@
 #ifndef GAME_SYMBOLS_H
 #define GAME_SYMBOLS_H
 
-#include "../../src/Core.h"
-#include "../../src/Game.h"
+#include "../ClassiCube/src/Core.h"
+#include "../ClassiCube/src/Game.h"
 
 #define STRING_REF
 

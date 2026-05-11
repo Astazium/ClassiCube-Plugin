@@ -1,5 +1,5 @@
-#include "../../src/Game.h"
-#include "../../src/PluginAPI.h"
+#include "../ClassiCube/src/Game.h"
+#include "../ClassiCube/src/PluginAPI.h"
 
 #define CompsDeclList           \
 DeclareComp(GameSymbolsComp)    \

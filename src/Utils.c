@@ -1,5 +1,5 @@
-#include "../../src/String_.h"
-#include "../../src/Chat.h"
+#include "../ClassiCube/src/String_.h"
+#include "../ClassiCube/src/Chat.h"
 #include "GameSymbols.h"
 #include "Utils.h"
 
