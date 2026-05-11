@@ -181,7 +181,7 @@ static void Chat_PrintBuildingETA(void) {
     int totalBlocks = Image.bmp.width * Image.bmp.height;
     int placedBlocks = Image.y * Image.bmp.width + Image.x;
     int remainingBlocks = totalBlocks - placedBlocks;
-    char msgBuf[256]; cc_string msgStr;
+    char msgBuf[128]; cc_string msgStr;
     String_InitArray(msgStr, msgBuf);
 
     GetFP(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eRemaining time: ");
@@ -256,6 +256,10 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
             cc_bool buildPause;
             if (!CheckBuildCmd())
                 return;
+            if (argsCount == 2) {
+                Chat_AddRaw("&eToo few arguments.");
+                return;
+            }
             if (!GetFP(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(&args[2], &buildPause)) {
                 Chat_AddRaw("&eCould not parse value.");
                 return;
