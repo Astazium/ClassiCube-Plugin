@@ -23,7 +23,7 @@ OBJS = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.o, $(SRCS))
 ifeq ($(OS), Windows_NT)
     TARGET = $(BUILD_DIR)/$(LIB_NAME).dll
 else
-    TARGET = $(BUILD_DIR)/lib$(LIB_NAME).so
+    TARGET = $(BUILD_DIR)/$(LIB_NAME).so
 endif
 
 .PHONY: all debug clean
