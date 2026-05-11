@@ -1,0 +1,87 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        include:
+
+          # Windows 32-bit
+          - os: windows
+            arch: x86
+            compiler: i686-w64-mingw32-gcc
+            package: gcc-mingw-w64-i686
+            output: SomeTweaksPlugin-win32.dll
+            ext: dll
+
+          # Windows 64-bit
+          - os: windows
+            arch: x64
+            compiler: x86_64-w64-mingw32-gcc
+            package: gcc-mingw-w64-x86-64
+            output: SomeTweaksPlugin-win64.dll
+            ext: dll
+
+          # Linux 32-bit
+          - os: linux
+            arch: x86
+            compiler: gcc
+            package: gcc-multilib
+            cflags: -m32
+            output: SomeTweaksPlugin-linux32.so
+            ext: so
+
+          # Linux 64-bit
+          - os: linux
+            arch: x64
+            compiler: gcc
+            package: gcc
+            cflags: -m64
+            output: SomeTweaksPlugin-linux64.so
+            ext: so
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone ClassiCube
+        run: git clone https://github.com/ClassiCube/ClassiCube.git
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install ${{ matrix.package }}
+
+          # Для 32-bit Linux
+          if [ "${{ matrix.os }}" = "linux" ] && [ "${{ matrix.arch }}" = "x86" ]; then
+            sudo apt-get -y install libc6-dev-i386
+          fi
+
+      - name: Build
+        run: |
+          if [ "${{ matrix.os }}" = "windows" ]; then
+            ${{ matrix.compiler }} \
+              -shared -O3 -s \
+              -Isrc \
+              src/*.c \
+              -o ${{ matrix.output }}
+          else
+            ${{ matrix.compiler }} \
+              ${{ matrix.cflags }} \
+              -shared -fPIC -O3 -s \
+              -Isrc \
+              src/*.c \
+              -o ${{ matrix.output }}
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-${{ matrix.arch }}
+          path: ${{ matrix.output }}
