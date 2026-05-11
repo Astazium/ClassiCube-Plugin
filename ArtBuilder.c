@@ -159,7 +159,7 @@ static const char* Png_GetErrorString(cc_result pngErr) {
 
 typedef struct IVec2_ { int x, y; } IVec2;
 
-struct {
+static struct {
     int     teleportRange;
     float   placeInterval;
     cc_bool exitOnFinish;
@@ -168,7 +168,7 @@ struct {
     cc_bool enabled;
 } MPmode = {6, 0.08f, false, false, false, false};
 
-struct {
+static struct {
     struct Bitmap bmp;
     IVec3 pos;
     Vec3  right;
