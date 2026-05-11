@@ -24,6 +24,7 @@ For multiplayer, ArtBuilder provides some customizable parameters to control how
 |-----------|-------------|---------------|
 | /client ArtBuilder build stop                             | Stops building process (only for multiplayer mode!)             | none  |
 | /client ArtBuilder build eta                              | Prints remaining time of building                               | none  |
+| /client ArtBuilder build pause [true/false]               | Pauses building process                                         | none  |
 | /client ArtBuilder [multiplayer/mp] [true/false]          | Turn multiplayer mode on/off, sets automaticly                  | auto  |
 | /client ArtBuilder exitOnFinish [true/false]              | Turn exit game on finish on/off                                 | false |
 | /client ArtBuilder [teleportRange/tpRange] [int]          | Distance in blocks before teleport to current building position | 6     |
