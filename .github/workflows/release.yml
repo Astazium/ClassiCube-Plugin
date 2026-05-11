@@ -7,14 +7,12 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
     strategy:
       matrix:
         include:
 
           # Windows 32-bit
-          - os: windows
+          - os: windows-latest
             arch: x86
             compiler: i686-w64-mingw32-gcc
             package: gcc-mingw-w64-i686
@@ -22,7 +20,7 @@ jobs:
             ext: dll
 
           # Windows 64-bit
-          - os: windows
+          - os: windows-latest
             arch: x64
             compiler: x86_64-w64-mingw32-gcc
             package: gcc-mingw-w64-x86-64
@@ -30,7 +28,7 @@ jobs:
             ext: dll
 
           # Linux 32-bit
-          - os: linux
+          - os: ubuntu-latest
             arch: x86
             compiler: gcc
             package: gcc-multilib
@@ -39,13 +37,22 @@ jobs:
             ext: so
 
           # Linux 64-bit
-          - os: linux
+          - os: ubuntu-latest
             arch: x64
             compiler: gcc
             package: gcc
             cflags: -m64
             output: SomeTweaksPlugin-linux64.so
             ext: so
+
+          # macOS 64-bit
+          - os: macos-latest
+            arch: x64
+            compiler: clang
+            output: SomeTweaksPlugin-macos64.dylib
+            ext: dylib
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -55,33 +62,29 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get -y install ${{ matrix.package }}
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            sudo apt-get update
+            sudo apt-get -y install ${{ matrix.package }}
 
-          # Linux 32-bit
-          if [ "${{ matrix.os }}" = "linux" ] && [ "${{ matrix.arch }}" = "x86" ]; then
-            sudo apt-get -y install libc6-dev-i386
+            if [ "${{ matrix.arch }}" = "x86" ]; then
+              sudo apt-get -y install libc6-dev-i386
+            fi
           fi
 
       - name: Build
         run: |
-          if [ "${{ matrix.os }}" = "windows" ]; then
-            ${{ matrix.compiler }} \
-              -shared -O3 -s \
-              -Isrc \
-              src/*.c \
-              -o ${{ matrix.output }}
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            ${{ matrix.compiler }} -shared -O3 -Isrc src/*.c -o ${{ matrix.output }}
+
+          elif [ "${{ runner.os }}" = "Darwin" ]; then
+            ${{ matrix.compiler }} -dynamiclib -O3 -Isrc src/*.c -o ${{ matrix.output }}
+
           else
-            ${{ matrix.compiler }} \
-              ${{ matrix.cflags }} \
-              -shared -fPIC -O3 -s \
-              -Isrc \
-              src/*.c \
-              -o ${{ matrix.output }}
+            ${{ matrix.compiler }} ${{ matrix.cflags }} -shared -fPIC -O3 -Isrc src/*.c -o ${{ matrix.output }}
           fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-${{ matrix.arch }}
+          name: ${{ runner.os }}-${{ matrix.arch }}
           path: ${{ matrix.output }}
