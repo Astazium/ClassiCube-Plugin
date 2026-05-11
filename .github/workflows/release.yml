@@ -7,17 +7,8 @@ on:
 
 jobs:
 
-  windows:
+  windows-x86:
     runs-on: windows-latest
-    strategy:
-      matrix:
-        include:
-          - arch: x86
-            compiler: i686-w64-mingw32-gcc
-            output: SomeTweaksPlugin-win32.dll
-          - arch: x64
-            compiler: x86_64-w64-mingw32-gcc
-            output: SomeTweaksPlugin-win64.dll
 
     steps:
       - uses: actions/checkout@v4
@@ -25,34 +16,83 @@ jobs:
       - name: Clone ClassiCube
         run: git clone https://github.com/ClassiCube/ClassiCube.git
 
+      - name: Setup MinGW
+        run: choco install mingw -y
+
       - name: Build
         shell: bash
         run: |
-          ${{ matrix.compiler }} \
-            -shared -O3 \
+          i686-w64-mingw32-gcc \
+            -shared -O3 -s \
             -Isrc \
             src/*.c \
-            -o ${{ matrix.output }}
+            -o SomeTweaksPlugin-win32.dll
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: windows-${{ matrix.arch }}
-          path: ${{ matrix.output }}
+          name: windows-x86
+          path: SomeTweaksPlugin-win32.dll
 
-  linux:
+  windows-x64:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone ClassiCube
+        run: git clone https://github.com/ClassiCube/ClassiCube.git
+
+      - name: Setup MinGW
+        run: choco install mingw -y
+
+      - name: Build
+        shell: bash
+        run: |
+          x86_64-w64-mingw32-gcc \
+            -shared -O3 -s \
+            -Isrc \
+            src/*.c \
+            -o SomeTweaksPlugin-win64.dll
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-x64
+          path: SomeTweaksPlugin-win64.dll
+
+  linux-x86:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - arch: x86
-            package: gcc-multilib
-            cflags: -m32
-            output: SomeTweaksPlugin-linux32.so
-          - arch: x64
-            package: gcc
-            cflags: -m64
-            output: SomeTweaksPlugin-linux64.so
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone ClassiCube
+        run: git clone https://github.com/ClassiCube/ClassiCube.git
+
+      - name: Install dependencies
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y gcc-multilib libc6-dev-i386
+
+      - name: Build
+        run: |
+          gcc \
+            -m32 \
+            -shared -fPIC -O3 -s \
+            -Isrc \
+            src/*.c \
+            -o SomeTweaksPlugin-linux32.so
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-x86
+          path: SomeTweaksPlugin-linux32.so
+
+  linux-x64:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -63,55 +103,19 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get -y install ${{ matrix.package }}
-
-          if [ "${{ matrix.arch }}" = "x86" ]; then
-            sudo apt-get -y install libc6-dev-i386
-          fi
+          sudo apt-get install -y gcc
 
       - name: Build
         run: |
           gcc \
-            ${{ matrix.cflags }} \
-            -shared -fPIC -O3 \
+            -m64 \
+            -shared -fPIC -O3 -s \
             -Isrc \
             src/*.c \
-            -o ${{ matrix.output }}
+            -o SomeTweaksPlugin-linux64.so
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: linux-${{ matrix.arch }}
-          path: ${{ matrix.output }}
-
-  macos:
-    runs-on: ${{ matrix.runs_on }}
-    strategy:
-      matrix:
-        include:
-          - arch: x64
-            runs_on: macos-13
-            output: SomeTweaksPlugin-macos-x64.dylib
-          - arch: arm64
-            runs_on: macos-14
-            output: SomeTweaksPlugin-macos-arm64.dylib
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Clone ClassiCube
-        run: git clone https://github.com/ClassiCube/ClassiCube.git
-
-      - name: Build
-        run: |
-          clang \
-            -dynamiclib -O3 \
-            -Isrc \
-            src/*.c \
-            -o ${{ matrix.output }}
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-${{ matrix.arch }}
-          path: ${{ matrix.output }}
+          name: linux-x64
+          path: SomeTweaksPlugin-linux64.so
