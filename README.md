@@ -36,4 +36,4 @@ For multiplayer, ArtBuilder provides some customizable parameters to control how
 3. Clone SomeTweaksPlugin repo: `git clone https://github.com/Astazium/SomeTweaksPlugin.git`
 4. Open ClassiCube solution in Visual Studio and create new project in it
 6. Open your project properties and in "Configuration Type" choose "Dynamic Library (.dll)". Don`t forget to change it for all configurations!
-7. Click on project, Add -> Existing Item, go to SomeTweaksPlugin directory and select all files
+7. Click on project, Add -> Existing Item, go to SomeTweaksPlugin/src directory and select all files
