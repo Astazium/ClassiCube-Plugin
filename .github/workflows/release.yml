@@ -8,26 +8,27 @@ on:
 jobs:
 
   windows-x86:
-    runs-on: windows-latest
-
+    runs-on: ubuntu-latest
+  
     steps:
       - uses: actions/checkout@v4
-
+  
       - name: Clone ClassiCube
         run: git clone https://github.com/ClassiCube/ClassiCube.git
-
-      - name: Setup MinGW
-        run: choco install mingw -y
-
+  
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-i686
+  
       - name: Build
-        shell: bash
         run: |
           i686-w64-mingw32-gcc \
             -shared -O3 -s \
             -Isrc \
             src/*.c \
             -o SomeTweaksPlugin-win32.dll
-
+  
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -35,26 +36,27 @@ jobs:
           path: SomeTweaksPlugin-win32.dll
 
   windows-x64:
-    runs-on: windows-latest
-
+    runs-on: ubuntu-latest
+  
     steps:
       - uses: actions/checkout@v4
-
+  
       - name: Clone ClassiCube
         run: git clone https://github.com/ClassiCube/ClassiCube.git
-
-      - name: Setup MinGW
-        run: choco install mingw -y
-
+  
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-mingw-w64-x86-64
+  
       - name: Build
-        shell: bash
         run: |
           x86_64-w64-mingw32-gcc \
             -shared -O3 -s \
             -Isrc \
             src/*.c \
             -o SomeTweaksPlugin-win64.dll
-
+  
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
