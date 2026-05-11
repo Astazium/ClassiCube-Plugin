@@ -13,10 +13,9 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Clone ClassiCube
-      run: git clone https://github.com/ClassiCube/ClassiCube.git
-
-    - name: Move plugin
-      run: mv "$GITHUB_WORKSPACE" ClassiCube/SomeTweaksPlugin
+      run: | 
+        git clone https://github.com/ClassiCube/ClassiCube.git
+        ln -s ClassiCube
 
     - name: Build
       run: |
