@@ -164,8 +164,9 @@ struct {
     float   placeInterval;
     cc_bool exitOnFinish;
     cc_bool buildRunning;
+    cc_bool buildPaused;
     cc_bool enabled;
-} MPmode = {6, 0.08f, false, false, false};
+} MPmode = {6, 0.08f, false, false, false, false};
 
 struct {
     struct Bitmap bmp;
@@ -188,8 +189,20 @@ static void Chat_PrintBuildingETA(void) {
     GetFP(FP_Chat_Add, CHAT_ADD_)(&msgStr);
 }
 
+static cc_bool CheckBuildCmd(void) {
+    if (!MPmode.enabled) {
+        Chat_AddRaw("&eYou are not in multiplayer mode.");
+        return false;
+    }
+    if (!MPmode.buildRunning) {
+        Chat_AddRaw("&eBuild already stopped.");
+        return false;
+    }
+    return true;
+}
+
 static void FreeImage(void) {
-    MPmode.buildRunning = false;
+    MPmode.buildRunning = false; MPmode.buildPaused = false;
     GetFP(FP_Mem_Free, MEM_FREE_)(Image.bmp.scan0);
     Image.bmp.scan0 = NULL;
 }
@@ -224,14 +237,8 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         
         if (String_CaselessEqualsConst_(&args[1], "stop")) {
             int placedBlocks;
-            if (!MPmode.enabled) {
-                Chat_AddRaw("&eYou are not in multiplayer mode.");
+            if (!CheckBuildCmd())
                 return;
-            }
-            if (!MPmode.buildRunning) {
-                Chat_AddRaw("&eBuild already stopped.");
-                return;
-            }
             placedBlocks = Image.y * Image.bmp.width + Image.x;
             Chat_Add1_("&eBuild stopped, %i blocks were builded.", &placedBlocks);
             FreeImage();
@@ -239,20 +246,36 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         }
 
         if (String_CaselessEqualsConst_(&args[1], "eta")) {
-            if (!MPmode.enabled) {
-                Chat_AddRaw("&eYou are not in multiplayer mode.");
+            if (!CheckBuildCmd())
                 return;
-            }
-            if (!MPmode.buildRunning) {
-                Chat_AddRaw("&eBuild already stopped.");
-                return;
-            }
             Chat_PrintBuildingETA();
+            return;
+        }
+
+        if (String_CaselessEqualsConst_(&args[1], "pause")) {
+            cc_bool buildPause;
+            if (!CheckBuildCmd())
+                return;
+            if (!GetFP(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(&args[2], &buildPause)) {
+                Chat_AddRaw("&eCould not parse value.");
+                return;
+            }
+            MPmode.buildPaused = buildPause;
+            if (buildPause) {
+                Chat_AddRaw("&eBuild paused.");
+            } else {
+                Chat_AddRaw("&eBuild unpaused.");
+            }
             return;
         }
 
         if (argsCount == 3 || argsCount == 6) {
             Chat_AddRaw("&eToo few arguments.");
+            return;
+        }
+
+        if (MPmode.buildPaused) {
+            Chat_AddRaw("&eBuild already paused.");
             return;
         }
 
@@ -336,9 +359,9 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         }
         MPmode.exitOnFinish = exitOnFinish;
         if (exitOnFinish) {
-            Chat_AddRaw("&eExit on finish enabled.");
+            Chat_AddRaw("&eExit game on finish enabled.");
         } else {
-            Chat_AddRaw("&eExit on finish disabled.");
+            Chat_AddRaw("&eExit game on finish disabled.");
         }
         return;
     }
@@ -457,7 +480,7 @@ static void ArtBuilder_SPBuild(void) {
 static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
     BitmapCol* row;
     task->interval = MPmode.placeInterval;
-    if (!MPmode.enabled || !MPmode.buildRunning) return;
+    if (!MPmode.enabled || !MPmode.buildRunning || MPmode.buildPaused) return;
 
     if (Image.y >= Image.bmp.height) {
         int totalBlocks = Image.bmp.width * Image.bmp.height;
