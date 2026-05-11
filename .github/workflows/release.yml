@@ -121,3 +121,50 @@ jobs:
         with:
           name: linux-x64
           path: SomeTweaksPlugin-linux64.so
+
+  macos-x64:
+    runs-on: macos-13
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone ClassiCube
+        run: git clone https://github.com/ClassiCube/ClassiCube.git
+
+      - name: Build
+        run: |
+          clang \
+            -dynamiclib -O3 \
+            -Isrc \
+            src/*.c \
+            -o SomeTweaksPlugin-macos-x64.dylib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-x64
+          path: SomeTweaksPlugin-macos-x64.dylib
+
+  macos-arm64:
+    runs-on: macos-14
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone ClassiCube
+        run: git clone https://github.com/ClassiCube/ClassiCube.git
+
+      - name: Build
+        run: |
+          clang \
+            -dynamiclib -O3 \
+            -target arm64-apple-macos11 \
+            -Isrc \
+            src/*.c \
+            -o SomeTweaksPlugin-macos-arm64.dylib
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm64
+          path: SomeTweaksPlugin-macos-arm64.dylib
