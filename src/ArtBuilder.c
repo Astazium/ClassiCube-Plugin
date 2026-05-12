@@ -405,6 +405,8 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         GetFP(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eBlock place interval setted to: ");
         Time_FormatSeconds(&msgStr, placeInterval);
         GetFP(FP_Chat_Add, CHAT_ADD_)(&msgStr);
+        if (MPmode.buildRunning)
+            Chat_PrintBuildingETA();
         return;
     }
 
