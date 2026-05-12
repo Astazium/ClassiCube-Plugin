@@ -332,6 +332,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
         pngDecodeErr = GetFP(FP_Png_Decode, PNG_DECODE_)(&Image.bmp, &s);
         if (pngDecodeErr) {
             Chat_Add1_("&eCould not decode png: %c", Png_GetErrorString(pngDecodeErr));
+            s.Close(&s);
             return;
         }
         s.Close(&s);
