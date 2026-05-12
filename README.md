@@ -5,8 +5,8 @@ A couple of useful (or not) features for [ClassiCube](https://github.com/ClassiC
 Rotates player with specified interval in seconds
 | Command | Description |
 |---------|-------------|
-| /client AntiAFK [true/false]             | Turn AntiAFK on/off                 |
-| /client AntiAFK [float value in seconds] | Sets rotating interval (in seconds) |
+| /client AntiAFK [true/false] | Turn AntiAFK on/off                 |
+| /client AntiAFK [float]      | Sets rotating interval (in seconds) |
 
 ## ArtBuilder
 Builds an png image from blocks with specified parameters
@@ -28,7 +28,7 @@ For multiplayer, ArtBuilder provides some customizable parameters to control how
 | /client ArtBuilder [multiplayer/mp] [true/false]          | Turn multiplayer mode on/off, sets automaticly                  | auto  |
 | /client ArtBuilder exitOnFinish [true/false]              | Turn exit game on finish on/off                                 | false |
 | /client ArtBuilder [teleportRange/tpRange] [int]          | Distance in blocks before teleport to current building position | 6     |
-| /client ArtBuilder placeInterval [float value in seconds] | How often (in seconds) blocks will be placed                    | 0.08f |
+| /client ArtBuilder placeInterval [float]                  | How often (in seconds) blocks will be placed                    | 0.08  |
 
 # Setting up for Visual Studio
 1. Open console and clone SomeTweaksPlugin repo: `git clone https://github.com/Astazium/SomeTweaksPlugin.git`
