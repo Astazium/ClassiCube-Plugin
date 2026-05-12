@@ -23,6 +23,7 @@ static const char AntiAfk_Disabled[] = "&eDisabled.";
 
 static cc_bool g_Enabled;
 static float   g_Interval = 1.0f;
+static double  g_Accumulator = 0.0;
 
 static void AntiAfk_Reset(void) {
     if (g_Enabled) {
@@ -49,6 +50,7 @@ static void AntiAfk_Execute(const cc_string* args, int argsCount) {
             GetFP(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eInterval updated to ");
             Time_FormatSeconds(&msgStr, interval);
             g_Interval = interval;
+            g_Accumulator = 0.0;
             GetFP(FP_Chat_Add, CHAT_ADD_)(&msgStr);
             return;
         }
@@ -63,6 +65,7 @@ static void AntiAfk_Execute(const cc_string* args, int argsCount) {
     if (enabled) {
         Chat_AddRaw(AntiAfk_Enabled);
     } else {
+        g_Accumulator = 0.0;
         Chat_AddRaw(AntiAfk_Disabled);
     }
 }
@@ -79,17 +82,19 @@ static struct ChatCommand AntiAfkCmd = {
 static struct Entity* PlayerEntity;
 
 static void AntiAfk_Task(struct ScheduledTask* task) {
-    task->interval = g_Interval;
-    if (g_Enabled) {
-        struct LocationUpdate update;
-        update.flags = LU_HAS_YAW;
-        update.yaw   = PlayerEntity->Yaw + 5.0f;
-        PlayerEntity->VTABLE->SetLocation(PlayerEntity, &update);
-    }
+    if (!g_Enabled) return;
+    g_Accumulator += task->interval;
+    if (g_Accumulator < g_Interval) return;
+
+    g_Accumulator = 0.0;
+    struct LocationUpdate update;
+    update.flags = LU_HAS_YAW;
+    update.yaw   = PlayerEntity->Yaw + 5.0f;
+    PlayerEntity->VTABLE->SetLocation(PlayerEntity, &update);
 }
 
 static void AntiAfk_Init(void) {
-    GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(g_Interval, AntiAfk_Task);
+    GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(GAME_DEF_TICKS, AntiAfk_Task);
     GetFP(FP_Commands_Register, COMMANDS_REGISTER_)(&AntiAfkCmd);
 }
 

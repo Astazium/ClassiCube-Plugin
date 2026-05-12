@@ -162,11 +162,12 @@ typedef struct IVec2_ { int x, y; } IVec2;
 static struct {
     int     teleportRange;
     float   placeInterval;
+    double  accumulator;
     cc_bool exitOnFinish;
     cc_bool buildRunning;
     cc_bool buildPaused;
     cc_bool enabled;
-} MPmode = {6, 0.08f, false, false, false, false};
+} MPmode = {6, 0.08f, 0.0, false, false, false, false};
 
 static struct {
     struct Bitmap bmp;
@@ -399,6 +400,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
             return;
         }
         MPmode.placeInterval = placeInterval;
+        MPmode.accumulator = 0.0;
         String_InitArray(msgStr, msgBuf);
         GetFP(FP_String_AppendConst, STRING_APPENDCONST_)(&msgStr, "&eBlock place interval setted to: ");
         Time_FormatSeconds(&msgStr, placeInterval);
@@ -441,6 +443,7 @@ static void ArtBuilder_Build(const IVec2* dir) {
     Image.y = 0;
 
     if (MPmode.enabled) {
+        MPmode.accumulator = 0.0;
         MPmode.buildRunning = true;
         Chat_PrintBuildingETA();
     } else {
@@ -483,8 +486,10 @@ static void ArtBuilder_SPBuild(void) {
 
 static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
     BitmapCol* row;
-    task->interval = MPmode.placeInterval;
     if (!MPmode.enabled || !MPmode.buildRunning || MPmode.buildPaused) return;
+    MPmode.accumulator += task->interval;
+    if (MPmode.accumulator < MPmode.placeInterval) return;
+    MPmode.accumulator = 0.0;
 
     if (Image.y >= Image.bmp.height) {
         int totalBlocks = Image.bmp.width * Image.bmp.height;
@@ -546,7 +551,7 @@ static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
 }
 
 static void ArtBuilder_Init(void) {
-    GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(MPmode.placeInterval, ArtBuilder_MPBuildTask);
+    GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(GAME_DEF_TICKS, ArtBuilder_MPBuildTask);
     GetFP(FP_Commands_Register, COMMANDS_REGISTER_)(&BuildImageCmd);
 }
 
