@@ -274,7 +274,7 @@ static void ArtBuilder_Execute(const cc_string* args, int argsCount) {
             return;
         }
 
-        if (argsCount == 3 || argsCount == 6) {
+        if (argsCount == 3) {
             Chat_AddRaw("&eToo few arguments.");
             return;
         }
