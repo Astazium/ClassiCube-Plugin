@@ -41,7 +41,8 @@ static void AntiAfk_Execute(const cc_string* args, int argsCount) {
     if (!GetFP(FP_Convert_ParseBool, CONVERT_PARSEBOOL_)(args, &enabled)) {
         float interval;
         if (GetFP(FP_Convert_ParseFloat, CONVERT_PARSEFLOAT_)(args, &interval)) {
-            char msgBuf[256]; cc_string msgStr;
+            char msgBuf[256]; 
+            cc_string msgStr;
             if (interval < 0.2f) {
                 Chat_AddRaw("&eInterval is too small.");
                 return;
