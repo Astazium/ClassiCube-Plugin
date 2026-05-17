@@ -18,10 +18,10 @@ Builds an png image from blocks with specified parameters
 ### Multiplayer mode
 ArtBuilder, like other features from this plugin, fully supports multiplayer!
 
-For multiplayer, ArtBuilder provides some customizable parameters to control how ArtBuilder would build your image.
+For multiplayer, ArtBuilder provides some customizable parameters and commands to control how ArtBuilder would build your image.
 
-| Parameter | Description | Default Value |
-|-----------|-------------|---------------|
+| Command | Description | Default Value |
+|---------|-------------|---------------|
 | /client ArtBuilder build stop                             | Stops building process (only for multiplayer mode!)             | none  |
 | /client ArtBuilder build eta                              | Prints remaining time of building                               | none  |
 | /client ArtBuilder build pause [true/false]               | Pauses building process                                         | none  |
