@@ -138,7 +138,6 @@ static void FreeCam_Init(void) {
 
 static Vec3 FreeCam_GetPosition(float t) {
     (void)t;
-
     static double lastTime;
     double currentTime;
     float delta;
