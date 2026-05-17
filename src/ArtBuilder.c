@@ -553,25 +553,26 @@ static void ArtBuilder_MPBuildTask(struct ScheduledTask* task) {
     }
 }
 
+static void UpdateAverageBlocksColor(void* obj) {
+    cc_bool   hasCPE;
+    (void)obj;
+    hasCPE = GetFP(FP_Options_GetBool, OPTIONS_GETBOOL_)(OPT_CPE, true);
+    blockCount = hasCPE ? BLOCK_MAX_CPE : BLOCK_MAX_ORIGINAL;
+    GetFP(FP_Chat_Add1, CHAT_ADD1_)("&eHas CPE: %t", &hasCPE);
+    TakeAverageBlocksColor();
+}
+
 static void ArtBuilder_Init(void) {
+    PlayerEntity = &TempVar(struct _EntitiesData*, ENTITIES_)->CurPlayer->Base;
+    World_ = GetGameSymbol(WORLD_);
+    Game_ChangeBlock_ = GetFP(FP_Game_ChangeBlock, GAME_CHANGEBLOCK_);
+    GetFP(FP_Event_Register, EVENT_REGISTER_)((void*)&TempVar(struct _TextureEventsList*, TEXTUREEVENTS_)->AtlasChanged, NULL, UpdateAverageBlocksColor);
     GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(GAME_DEF_TICKS, ArtBuilder_MPBuildTask);
     GetFP(FP_Commands_Register, COMMANDS_REGISTER_)(&BuildImageCmd);
 }
 
 static void ArtBuilder_OnNewMapLoaded(void) {
-    cc_bool   hasCPE;
-
-    hasCPE = GetFP(FP_Options_GetBool, OPTIONS_GETBOOL_)(OPT_CPE, true);
-    blockCount = hasCPE ? BLOCK_MAX_CPE : BLOCK_MAX_ORIGINAL;
-    GetFP(FP_Chat_Add1, CHAT_ADD1_)("&eHas CPE: %t", &hasCPE);
-    TakeAverageBlocksColor();
-
-    PlayerEntity = &TempVar(struct _EntitiesData*, ENTITIES_)->CurPlayer->Base;
-    World_ = GetGameSymbol(WORLD_);
-    Game_ChangeBlock_ = GetFP(FP_Game_ChangeBlock, GAME_CHANGEBLOCK_);
-
     FreeImage();
-
     if (!TempVar(struct _ServerConnectionData*, SERVER_)->IsSinglePlayer) {
         MPmode.enabled = true;
         Chat_AddRaw("&eYou are currently in multiplayer");

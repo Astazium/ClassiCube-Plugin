@@ -3,6 +3,7 @@
 
 #include "../ClassiCube/src/Core.h"
 #include "../ClassiCube/src/Game.h"
+#include "../ClassiCube/src/Event.h"
 
 #define STRING_REF
 
@@ -20,6 +21,9 @@ typedef cc_string(*FP_String_FromReadonly)(STRING_REF const char* buffer);
 typedef void(*FP_Mem_Free)(void* mem);
 typedef void(*FP_Process_Exit)(cc_result code);
 
+/* Events */
+typedef void(*FP_Event_Register)  (struct Event_Void* handlers, void* obj, Event_Void_Callback handler);
+typedef void(*FP_Event_Unregister)(struct Event_Void* handlers, void* obj, Event_Void_Callback handler);
 /* Convert */
 typedef cc_bool(*FP_Convert_ParseBool)(const cc_string* str, cc_bool* value);
 typedef cc_bool(*FP_Convert_ParseInt)(const cc_string* str, int* value);
@@ -36,8 +40,8 @@ typedef void(*FP_Chat_Add4)(const char* format, const void* a1, const void* a2, 
 #undef STRING_REF
 
 /*
-	DeclareSymbol(enumName, symbolName)
-	in code, use enumName!
+    DeclareSymbol(enumName, symbolName)
+    in code, use enumName!
 */
 #define SymbolsDeclList													\
 /* Structures */														\
@@ -46,6 +50,13 @@ DeclareSymbol(ATLAS2D_,				Atlas2D)							\
 DeclareSymbol(ENTITIES_,			Entities)							\
 DeclareSymbol(WORLD_,				World)								\
 DeclareSymbol(SERVER_,				Server)								\
+DeclareSymbol(CAMERA_,				Camera)								\
+DeclareSymbol(GAME_,				Game)								\
+/* Events */															\
+DeclareSymbol(INPUTEVENTS_,			InputEvents)						\
+DeclareSymbol(TEXTUREEVENTS_,		TextureEvents)						\
+DeclareSymbol(EVENT_REGISTER_,		Event_Register)						\
+DeclareSymbol(EVENT_UNREGISTER_,	Event_Unregister)					\
 /* Chat */																\
 DeclareSymbol(CHAT_ADD_,			Chat_Add)							\
 DeclareSymbol(CHAT_ADDOF_,			Chat_AddOf)							\
@@ -82,8 +93,8 @@ DeclareSymbol(WINDOW_SHOWDIALOG_,   Window_ShowDialog)
 #define DeclareSymbol(enumName, symbolName) enumName,
 enum GAMESYMBOL
 {
-	SymbolsDeclList
-	TOTAL_SYMBOLS
+    SymbolsDeclList
+    TOTAL_SYMBOLS
 };
 #undef DeclareSymbol
 

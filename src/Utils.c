@@ -15,9 +15,9 @@ void Time_FormatSeconds(cc_string* str, float totalSeconds) {
 
     total_ms = (int)(totalSeconds * 1000.0f + 0.5f);
     milliseconds = total_ms % 1000;
-    seconds = (total_ms / 1000) % 60;
-    minutes = (total_ms / 60000) % 60;
-    hours   = (total_ms / 3600000);
+    seconds  = (total_ms / 1000) % 60;
+    minutes  = (total_ms / 60000) % 60;
+    hours    = (total_ms / 3600000);
 
     String_Format2_ = GetFP(FP_String_Format2, STRING_FORMAT2_);
 

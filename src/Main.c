@@ -4,7 +4,8 @@
 #define CompsDeclList           \
 DeclareComp(GameSymbolsComp)    \
 DeclareComp(AntiAfkComp)        \
-DeclareComp(ArtBuilderComp)
+DeclareComp(ArtBuilderComp)     \
+DeclareComp(FreeCamComp)
 
 #define DeclareComp(name) extern const struct IGameComponent name;
 CompsDeclList

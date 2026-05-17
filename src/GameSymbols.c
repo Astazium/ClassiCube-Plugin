@@ -27,7 +27,6 @@ RawSymbol GetGameRawSymbol(enum GAMESYMBOL gameSymbol)
 }
 
 #define QUOTE(x) #x
-
 #ifdef  CC_BUILD_WIN
 #define WIN32_LEAN_AND_MEAN
 #define NOSERVICE
