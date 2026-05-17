@@ -8,6 +8,13 @@ Rotates player with specified interval in seconds
 | /client AntiAFK [true/false] | Turn AntiAFK on/off                 |
 | /client AntiAFK [float]      | Sets rotating interval (in seconds) |
 
+## FreeCam
+FreeCam. Controls on arrow keys and numpad's 1 to up, 0 to down
+| Command | Description |
+|---------|-------------|
+| /client FreeCam [true/false] | Turn FreeCam on/off |
+| /client FreeCam [float]      | Changes speed       |
+
 ## ArtBuilder
 Builds an png image from blocks with specified parameters
 | Command | Description |
