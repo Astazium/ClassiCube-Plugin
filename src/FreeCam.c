@@ -15,6 +15,8 @@ static struct Camera* ActiveCamera = NULL;
 static Vec3 FreeCam_GetPosition(float t);
 
 static void FreeCam_Enable(void) {
+    if (ActiveCamera && ActiveCamera->GetPosition == FreeCam_GetPosition)
+        ActiveCamera->GetPosition = OldGetPosition;
     ActiveCamera = TempVar(struct _CameraData*, CAMERA_)->Active;
     OldGetPosition = ActiveCamera->GetPosition;
     ActiveCamera->GetPosition = FreeCam_GetPosition;
