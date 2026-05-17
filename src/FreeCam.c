@@ -63,10 +63,10 @@ static void FreeCam_Execute(const cc_string* args, int argsCount) {
     g_wasEnabled = enabled;
     if (enabled) {
         FreeCam_Enable();
-        Chat_AddRaw("&eFreeCam enabled");
+        Chat_AddRaw("&eFreeCam enabled.");
     } else {
         FreeCam_Disable();
-        Chat_AddRaw("&eFreeCam disabled");
+        Chat_AddRaw("&eFreeCam disabled.");
     }
 }
 
