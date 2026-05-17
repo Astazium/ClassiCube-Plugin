@@ -8,8 +8,7 @@
 #include "GameSymbols.h"
 #include "Utils.h"
 
-static void FreeCam_Init(void);
-
+static cc_bool g_wasEnabled = false;
 static Vec3(*OldGetPosition)(float t) = NULL;
 static struct Camera* ActiveCamera = NULL;
 
@@ -26,7 +25,10 @@ static void FreeCam_Disable(void) {
         ActiveCamera->GetPosition = OldGetPosition;
     OldGetPosition = NULL;
     ActiveCamera = NULL;
+    g_wasEnabled = false;
 }
+
+static void FreeCam_Init(void);
 
 const struct IGameComponent FreeCamComp = {
     FreeCam_Init, /* Init */
@@ -40,7 +42,6 @@ static float g_Speed = 19.2f;
 
 static void FreeCam_Execute(const cc_string* args, int argsCount) {
     cc_bool enabled;
-    static cc_bool wasEnabled = false;
     if (argsCount == 0) {
         Chat_AddRaw("&eToo few arguments.");
         return;
@@ -55,11 +56,11 @@ static void FreeCam_Execute(const cc_string* args, int argsCount) {
         Chat_AddRaw("&eCould not parse value.");
         return;
     }
-    if (enabled == wasEnabled) {
+    if (enabled == g_wasEnabled) {
         Chat_AddRaw("&eValue doesn't change.");
         return;
     }
-    wasEnabled = enabled;
+    g_wasEnabled = enabled;
     if (enabled) {
         FreeCam_Enable();
         Chat_AddRaw("&eFreeCam enabled");
