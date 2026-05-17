@@ -17,14 +17,14 @@
 
 static void FreeImage(void);
 static void ArtBuilder_Init(void);
-static void ArtBuilder_OnNewMapLoaded(void);
+static void FreeImage(void);
 
 const struct IGameComponent ArtBuilderComp = {
     ArtBuilder_Init, /* Init */
     FreeImage, /* Free */
     FreeImage, /* Reset */
     NULL, /* OnNewMap */
-    ArtBuilder_OnNewMapLoaded, /* OnNewMapLoaded */
+    FreeImage, /* OnNewMapLoaded */
 };
 
 static BlockID   blockCount = BLOCK_MAX_CPE;
@@ -566,21 +566,20 @@ static void ArtBuilder_Init(void) {
     PlayerEntity = &TempVar(struct _EntitiesData*, ENTITIES_)->CurPlayer->Base;
     World_ = GetGameSymbol(WORLD_);
     Game_ChangeBlock_ = GetFP(FP_Game_ChangeBlock, GAME_CHANGEBLOCK_);
-    GetFP(FP_Event_Register, EVENT_REGISTER_)((void*)&TempVar(struct _TextureEventsList*, TEXTUREEVENTS_)->AtlasChanged, NULL, UpdateAverageBlocksColor);
-    GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(GAME_DEF_TICKS, ArtBuilder_MPBuildTask);
-    GetFP(FP_Commands_Register, COMMANDS_REGISTER_)(&BuildImageCmd);
-}
 
-static void ArtBuilder_OnNewMapLoaded(void) {
-    FreeImage();
     if (!TempVar(struct _ServerConnectionData*, SERVER_)->IsSinglePlayer) {
         MPmode.enabled = true;
         Chat_AddRaw("&eYou are currently in multiplayer");
         Chat_AddRaw("&eArtBuilder mode setted to multiplayer");
         Chat_AddRaw("&eTo turn it off, type /client ArtBuilder mp false");
-    } else {
+    }
+    else {
         MPmode.enabled = false;
     }
+
+    GetFP(FP_Event_Register, EVENT_REGISTER_)((void*)&TempVar(struct _TextureEventsList*, TEXTUREEVENTS_)->AtlasChanged, NULL, UpdateAverageBlocksColor);
+    GetFP(FP_ScheduledTask_Add, SCHEDULEDTASK_ADD_)(GAME_DEF_TICKS, ArtBuilder_MPBuildTask);
+    GetFP(FP_Commands_Register, COMMANDS_REGISTER_)(&BuildImageCmd);
 }
 
 #ifdef  CC_BUILD_WIN
